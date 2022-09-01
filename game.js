@@ -16,7 +16,20 @@ const giftPosition = {
     y:undefined
 };
 const bombsPosition =[];
+
+let cantidadLevels = mapRowsCols.map(element => bombsPosition.push([]));
 let startPosition =[];
+
+let level = 0;
+let flag = true;
+/*     for (let i = 0; i < mapRowsCols.length; i++) {
+        bombsPosition.push = [];
+        
+    } */
+
+
+
+
 window.addEventListener('load', starGame);
 window.addEventListener('resize', starGame);
 up.addEventListener('click', moveUp)
@@ -52,37 +65,46 @@ function starGame(){
     game.clearRect(0,0,canvasSize,canvasSize);
     for (let i = 0; i < 10; i++) {
         for (let z = 1; z <= 10; z++) {
-            game.fillText(emojis[mapRowsCols[1][i][z-1]], elementSize*i, elementSize*z)
+            game.fillText(emojis[mapRowsCols[level][i][z-1]], elementSize*i, elementSize*z)
 
-            if(mapRowsCols[1][i][z-1] == 'I'){
+            if(mapRowsCols[level][i][z-1] == 'I'){
                 giftPosition.x = elementSize*i;
                 giftPosition.y = elementSize*z;
             }
-            if(mapRowsCols[1][i][z-1] == 'O' && playerPosition.x == undefined){
+            if(mapRowsCols[level][i][z-1] == 'O' && playerPosition.x == undefined){
                 playerPosition.x = elementSize*i;
                 playerPosition.y = elementSize*z;
-                startPosition = [playerPosition.x,playerPosition.y];
+                startPosition = [elementSize*i,elementSize*z];
                 console.log(startPosition);
                 renderPlayer();
             }
-            if(mapRowsCols[1][i][z-1] == 'X' && playerPosition.x === startPosition[0] && playerPosition.y === startPosition[1]){
-                bombsPosition.push({x: elementSize*i, y: elementSize*z})
+            if(mapRowsCols[level][i][z-1] == 'X' && flag /* && playerPosition.x === startPosition[0] && playerPosition.y === startPosition[1] */){
+                bombsPosition[level].push({x: elementSize*i, y: elementSize*z})
+                
             }
         }
+        
     }
-
+    console.log(bombsPosition);
+    flag = false;
     renderPlayer();
 }
 
 function renderPlayer (){
-    const gameOver = bombsPosition.find(item => item.x.toFixed() == playerPosition.x.toFixed() && item.y.toFixed() == playerPosition.y.toFixed())
+    const gameOver = bombsPosition[level].find(item => item.x.toFixed() == playerPosition.x.toFixed() && item.y.toFixed() == playerPosition.y.toFixed())
     console.log(gameOver);
 
     if(Math.round(playerPosition.y) == Math.round(giftPosition.y) && Math.round(playerPosition.x) == Math.round(giftPosition.x)){
+        level += 1;
+        flag = true;
+        starGame();
         console.log('Pasaste de nivel!!!');
 
     }else if(gameOver){
-        game.fillText(emojis['BOMB_COLLISION'], playerPosition.x, playerPosition.y);
+        playerPosition.x = startPosition.x;
+        playerPosition.y = startPosition.y;
+        starGame();
+        game.fillText(emojis['BOMB_COLLISION'], gameOver.x, gameOver.y);
         console.warn('GAME OVER');
 
     }
