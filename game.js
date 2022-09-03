@@ -5,6 +5,9 @@ const up = document.getElementById('up');
 const down = document.getElementById('down');
 const right = document.getElementById('right');
 const left = document.getElementById('left');
+const reset = document.getElementById('reset');
+const livesHTML = document.querySelector('.lives');
+
 let canvasSize;
 let elementSize;
 const playerPosition = {
@@ -21,11 +24,8 @@ let cantidadLevels = mapRowsCols.map(element => bombsPosition.push([]));
 let startPosition =[];
 
 let level = 0;
+let lives = 3;
 let flag = true;
-/*     for (let i = 0; i < mapRowsCols.length; i++) {
-        bombsPosition.push = [];
-        
-    } */
 
 
 
@@ -36,6 +36,7 @@ up.addEventListener('click', moveUp)
 down.addEventListener('click', moveDown)
 right.addEventListener('click', moveR)
 left.addEventListener('click', moveL)
+reset.addEventListener('click', resetLives)
 window.addEventListener('keyup', (event) => {
    /*  if(event.key === 'ArrowUp') moveUp();
     else if(event.key === 'ArrowDown') moveDown();
@@ -56,13 +57,34 @@ window.addEventListener('keyup', (event) => {
 });
 
 
-
+function resetLives(){
+    location.reload()
+}
 
 function starGame(){
+    console.log(level);
     canvasResize()
     game.textAlign = 'start';
     game.font = elementSize + 'px Arial'
+    
     game.clearRect(0,0,canvasSize,canvasSize);
+    console.log(lives);
+    if (lives === 3){
+        livesHTML.innerText = 'Vidas: 💚💚💚';
+    }else if (lives === 2){
+        livesHTML.innerText = 'Vidas: 💚💚';
+    }else if (lives === 1){
+        livesHTML.innerText = 'Vidas: 💚';
+    }else {
+        livesHTML.innerText = 'GAME OVER';
+        level = 0;
+        lives = 3;
+        playerPosition.x = undefined;
+        playerPosition.y = undefined;
+        setTimeout(() => starGame(), 1000);
+        
+    }
+    
     for (let i = 0; i < 10; i++) {
         for (let z = 1; z <= 10; z++) {
             game.fillText(emojis[mapRowsCols[level][i][z-1]], elementSize*i, elementSize*z)
@@ -78,7 +100,7 @@ function starGame(){
                 console.log(startPosition);
                 renderPlayer();
             }
-            if(mapRowsCols[level][i][z-1] == 'X' && flag /* && playerPosition.x === startPosition[0] && playerPosition.y === startPosition[1] */){
+            if(mapRowsCols[level][i][z-1] == 'X' && flag ){
                 bombsPosition[level].push({x: elementSize*i, y: elementSize*z})
                 
             }
@@ -97,15 +119,25 @@ function renderPlayer (){
     if(Math.round(playerPosition.y) == Math.round(giftPosition.y) && Math.round(playerPosition.x) == Math.round(giftPosition.x)){
         level += 1;
         flag = true;
+        if (!mapRowsCols[level]){
+            console.log('FELICIDADES! Has completado el juego');
+            game.clearRect(0,0,canvasSize,canvasSize);
+            game.textAlign = 'center';
+            game.fillText('FELICIDADES!', canvasSize*.50, canvasSize*.20);
+            game.fillText(emojis['WIN'], canvasSize*.50, canvasSize*.50);
+            return;
+        }
         starGame();
         console.log('Pasaste de nivel!!!');
 
     }else if(gameOver){
         playerPosition.x = startPosition.x;
         playerPosition.y = startPosition.y;
+        lives--;
+        flag = false;
         starGame();
         game.fillText(emojis['BOMB_COLLISION'], gameOver.x, gameOver.y);
-        console.warn('GAME OVER');
+        console.warn('BOOOM');
 
     }
     else {
