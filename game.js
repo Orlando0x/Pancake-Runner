@@ -7,6 +7,10 @@ const right = document.getElementById('right');
 const left = document.getElementById('left');
 const reset = document.getElementById('reset');
 const livesHTML = document.querySelector('.lives');
+const time = document.getElementById('spanTime');
+const recordView = document.querySelector('.record');
+const playAgain = document.getElementById('playAgain')
+const cleanRecord = document.getElementById('cleanRecords');
 
 let canvasSize;
 let elementSize;
@@ -21,22 +25,25 @@ const giftPosition = {
 const bombsPosition =[];
 
 let cantidadLevels = mapRowsCols.map(element => bombsPosition.push([]));
-let startPosition =[];
 
 let level = 0;
 let lives = 3;
 let flag = true;
 
+let startTime;
+let playerTime;
+let intervalTime;
 
 
 
-window.addEventListener('load', starGame);
-window.addEventListener('resize', starGame);
+window.addEventListener('load', startGame);
+window.addEventListener('resize', startGame);
 up.addEventListener('click', moveUp)
 down.addEventListener('click', moveDown)
 right.addEventListener('click', moveR)
 left.addEventListener('click', moveL)
-reset.addEventListener('click', resetLives)
+reset.addEventListener('click', resetGame)
+cleanRecord.addEventListener('click', cleanRecords)
 window.addEventListener('keyup', (event) => {
    /*  if(event.key === 'ArrowUp') moveUp();
     else if(event.key === 'ArrowDown') moveDown();
@@ -56,35 +63,65 @@ window.addEventListener('keyup', (event) => {
 
 });
 
-
-function resetLives(){
+function cleanRecords(){
+    localStorage.removeItem('record');
+    recordView.innerText = 'Record: 🏁 -'
+}
+function gameOver(){
+    game.clearRect(0,0,canvasSize,canvasSize);
+    game.textAlign = 'center';
+    game.fillText('GAME OVER!', canvasSize*.50, canvasSize*.20);
+    livesHTML.innerText = 'GAME OVER';
+    clearInterval(intervalTime);
+    moveUp();
+    /* setTimeout(() => resetGame(), 2000); */
+}
+function winGame (){
+        console.log('FELICIDADES! Has completado el juego');
+        game.clearRect(0,0,canvasSize,canvasSize);
+        game.textAlign = 'center';
+        game.fillText('CONGRATULATION!', canvasSize*.50, canvasSize*.20);
+        game.fillText(emojis['WIN'], canvasSize*.50, canvasSize*.50);
+        showRecord();
+        clearInterval(intervalTime);
+}
+function resetGame(){
     location.reload()
 }
+function showTime(){
+    playerTime = (Date.now() - startTime)/1000;
+    time.innerText = playerTime.toFixed(2) + ' s';
+}
+function showRecord(){
+    if(localStorage.getItem('record') == 0 || playerTime < localStorage.getItem('record')){
+        localStorage.setItem('record', playerTime);
+    }
+    recordView.innerText = 'Record: 🏁'+ localStorage.getItem('record') + ' s';
+}
 
-function starGame(){
-    console.log(level);
+function startGame(){
     canvasResize()
     game.textAlign = 'start';
     game.font = elementSize + 'px Arial'
-    
-    game.clearRect(0,0,canvasSize,canvasSize);
-    console.log(lives);
-    if (lives === 3){
-        livesHTML.innerText = 'Vidas: 💚💚💚';
-    }else if (lives === 2){
-        livesHTML.innerText = 'Vidas: 💚💚';
-    }else if (lives === 1){
-        livesHTML.innerText = 'Vidas: 💚';
-    }else {
-        livesHTML.innerText = 'GAME OVER';
-        level = 0;
-        lives = 3;
-        playerPosition.x = undefined;
-        playerPosition.y = undefined;
-        setTimeout(() => starGame(), 1000);
-        
+    game.clearRect(0,0,canvasSize,canvasSize); 
+    if(!startTime){
+        startTime = Date.now();
+        intervalTime = setInterval(showTime,100);
     }
     
+    if (lives > 0){
+        livesHTML.innerText = "Vidas: " + emojis['HEART'].repeat(lives);
+    } else{
+        gameOver();
+        return;
+    }
+    if (!localStorage.getItem('record')){
+        localStorage.setItem('record', 0)
+    } else if (localStorage.getItem('record') == 0){
+        recordView.innerText = 'Record: 🏁 -'
+    } else {
+        recordView.innerText = 'Record: 🏁 '+ localStorage.getItem('record')+ ' s';
+    }
     for (let i = 0; i < 10; i++) {
         for (let z = 1; z <= 10; z++) {
             game.fillText(emojis[mapRowsCols[level][i][z-1]], elementSize*i, elementSize*z)
@@ -94,56 +131,46 @@ function starGame(){
                 giftPosition.y = elementSize*z;
             }
             if(mapRowsCols[level][i][z-1] == 'O' && playerPosition.x == undefined){
+                console.log(elementSize*i);
                 playerPosition.x = elementSize*i;
                 playerPosition.y = elementSize*z;
-                startPosition = [elementSize*i,elementSize*z];
-                console.log(startPosition);
-                renderPlayer();
             }
-            if(mapRowsCols[level][i][z-1] == 'X' && flag ){
+            if(mapRowsCols[level][i][z-1] == 'X' && flag){
                 bombsPosition[level].push({x: elementSize*i, y: elementSize*z})
-                
             }
         }
-        
     }
-    console.log(bombsPosition);
     flag = false;
     renderPlayer();
 }
 
 function renderPlayer (){
-    const gameOver = bombsPosition[level].find(item => item.x.toFixed() == playerPosition.x.toFixed() && item.y.toFixed() == playerPosition.y.toFixed())
-    console.log(gameOver);
+    const collision = bombsPosition[level].find(item => item.x.toFixed() == playerPosition.x.toFixed() && item.y.toFixed() == playerPosition.y.toFixed());
 
     if(Math.round(playerPosition.y) == Math.round(giftPosition.y) && Math.round(playerPosition.x) == Math.round(giftPosition.x)){
-        level += 1;
+        level++;
         flag = true;
+        playerPosition.x = undefined;
+        playerPosition.y = undefined;
         if (!mapRowsCols[level]){
-            console.log('FELICIDADES! Has completado el juego');
-            game.clearRect(0,0,canvasSize,canvasSize);
-            game.textAlign = 'center';
-            game.fillText('FELICIDADES!', canvasSize*.50, canvasSize*.20);
-            game.fillText(emojis['WIN'], canvasSize*.50, canvasSize*.50);
+            winGame();
             return;
         }
-        starGame();
+        startGame();
         console.log('Pasaste de nivel!!!');
 
-    }else if(gameOver){
-        playerPosition.x = startPosition.x;
-        playerPosition.y = startPosition.y;
-        lives--;
-        flag = false;
-        starGame();
-        game.fillText(emojis['BOMB_COLLISION'], gameOver.x, gameOver.y);
-        console.warn('BOOOM');
+    } else if(collision){
+            playerPosition.x = undefined;
+            playerPosition.y = undefined;
+            lives--;
+            flag = false;
+            startGame();
+            game.fillText(emojis['BOMB_COLLISION'], collision.x, collision.y);
+            console.warn('BOOOM');
 
-    }
-    else {
+    } else {
         game.fillText(emojis['PLAYER'], playerPosition.x, playerPosition.y);
     }
-
 }
 function canvasResize (){
     if(window.innerWidth < window.innerHeight){
@@ -161,7 +188,7 @@ function moveUp(){
         playerPosition.y
     }else{
         playerPosition.y -= elementSize;
-        starGame();
+        startGame();
 
     }
 }   
@@ -170,7 +197,7 @@ function moveDown(){
         playerPosition.y
     }else{
         playerPosition.y += elementSize;
-        starGame();
+        startGame();
 
     }
 }   
@@ -179,7 +206,7 @@ function moveR(){
         playerPosition.x
     }else{
         playerPosition.x += elementSize;
-        starGame();
+        startGame();
 
     }
 }   
@@ -189,7 +216,7 @@ function moveL(){
 
     }else{
         playerPosition.x -= elementSize;
-        starGame();
+        startGame();
 
     }
 }   

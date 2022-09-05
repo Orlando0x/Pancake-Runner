@@ -10,18 +10,19 @@
 <body>
     <div class="game-container">
         <canvas id="game"></canvas>
-
         <div class="btns">
-            <button id="up">Arriba</button>
-            <button id="left">Izquierda</button>
-            <button id="right">Derecha</button>
-            <button id="down">Abajo</button>
+            <button id="up">UP</button>
+            <button id="left">LEFT</button>
+            <button id="right">RIGHT</button>
+            <button id="down">DOWN</button>
         </div>
         <div class="messages">
-            <p class="lives">Vidas: 💚💚💚</p>
-            <p class="time">Tiempo: ⏰101010101</p>
-            <p class="record">Record: 🏁18000.5</p>
-            <button id="reset">RESET</button>
+            <p class="lives"></p>
+            <p>Tiempo:⏱️ <span id="spanTime"></span></p>
+            <p class="record">Record: 🏁 - </p>
+            <button id="reset">RESET GAME</button>
+            <button id="cleanRecords">Delete Record</button>
+
         </div>
     <script src="./maps.js"></script>
     <script src="./game.js"></script>
