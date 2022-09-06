@@ -1,12 +1,18 @@
 html{
     box-sizing: border-box;
     font-size: 62.5%;
+    font-family: 'Silkscreen', cursive;
 }
 body {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     margin: 0;
     padding: 0;
     background-color: rgb(85, 27, 139);
+}
+
+
+.inactive{
+    display: none;
 }
 .game-container {
     display: flex;
@@ -19,77 +25,139 @@ body {
 }
 
 canvas {
-/*     width:  400px;
-    height: 400px; */
-    background-color: rgb(248, 248, 186);
-    border: 2px solid rgb(255, 166, 0);
+    background-color: rgb(248, 248, 202);
+    border: 3px dashed orange;
     border-radius: 8px;
 }
 
-.btns {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 12px;
+.banner-gameOver{
     width: 100%;
+    background-color: red;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+}
+.banner-WIN{
+    width: 100%;
+    background-color: #8bc34a;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+}
+.banner-record{
+    color: white;
+}
+.btns {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 3fr 1fr 3fr;
+    justify-content: center;
+    gap: 16px;
     margin-top: 12px;
 }
 .btns button {
-    display: inline-block;
-    width: 100px;
+    
+    width: 60px;
     background-color: yellow;
-    padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: 24px;
     border: 2px solid rgb(255, 166, 0);
     /* border-color: orange; */
     font-weight: bold;
 }
+.btns img {
+    width: 100%;
+}
+#up {
+    grid-row: 1/2;
+    grid-column: 2/4;
+    transform: rotate(-90deg);
+}
+#down {
+    grid-column: 2/3;
+    grid-row: 2/3;
+    transform: rotate(90deg);
+}
+#left {
+    grid-column: 1/2;
+    grid-row: 2/3;
+    transform: rotate(180deg);
+    justify-self: right;
+}
+#right {
+    grid-column: 3/4;
+    
+}
+#reset {
+    grid-row: 1/2;
+    grid-column: 3/4;
+    justify-self: right;
+    
+}
 #reset, #cleanRecords {
+    font-family: 'Silkscreen', cursive;
     display: inline-block;
     width: 100px;
     background-color: yellow;
-    padding: 8px 16px;
     border-radius: 8px;
     border: 2px solid rgb(255, 166, 0);
-    /* border-color: orange; */
-    font-weight: bold;
+    font-weight: 400;
+    text-align: center;
+}
+#cleanRecords{
+    grid-column: 1/2;
+    grid-row: 1/2;
 }
 
 .messages{
-    width: 70%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
     text-align: left;
-    /* margin: 0 30%; */
-/*     margin-left: 60%; */
 
 }
 .messages p {
     color: white;
-    font-size: 2.4rem;
-    font-weight: bold;
+    font-size: 2rem;
+    font-weight: 400;
+    background-color: black;
+    box-shadow: 8px 4px yellow;
+}
+.setGame {
+    display: flex;
+    gap: 12px;
+}
+.container-record {
+    display: flex;
+    gap: 20px
+}
+.record {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 400;
+    background-color: black;
+    box-shadow: 8px 4px yellow;
 }
 @media (max-width: 550px) {
-    #up, #down {
-        margin: 0 100%;
+
+    #up,#down,#left,#right {
+        width: 40px;
+        height: 40px;
+
+    }
+    #reset, #cleanRecords {
+
+        width: 65px;
+        font-size: 1.2rem;
+        text-align: center;
+
     }
     .messages p {
 
         font-size: 1.6rem;
 
     }
-    .btns button {
-        font-size: 1.2rem;
-    }
-}
-
-@media (min-width: 900px){
-    .messages{
-        width: 50%;
-
-    }
-}
-@media (min-width: 1300px){
-    .messages{
-        width: 30%;
-
+    .btns button, .record{
+        font-size: 1.4rem;
     }
 }

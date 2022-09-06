@@ -11,6 +11,9 @@ const time = document.getElementById('spanTime');
 const recordView = document.querySelector('.record');
 const playAgain = document.getElementById('playAgain')
 const cleanRecord = document.getElementById('cleanRecords');
+const bannerGO = document.querySelector('.banner-gameOver');
+const bannerWIN = document.querySelector('.banner-WIN');
+const bannerRercord = document.querySelector('.banner-record');
 
 let canvasSize;
 let elementSize;
@@ -23,7 +26,10 @@ const giftPosition = {
     y:undefined
 };
 const bombsPosition =[];
-
+const startPosition = {
+    x: undefined,
+    y:undefined
+}
 let cantidadLevels = mapRowsCols.map(element => bombsPosition.push([]));
 
 let level = 0;
@@ -37,7 +43,7 @@ let intervalTime;
 
 
 window.addEventListener('load', startGame);
-window.addEventListener('resize', startGame);
+window.addEventListener('resize', resize);
 up.addEventListener('click', moveUp)
 down.addEventListener('click', moveDown)
 right.addEventListener('click', moveR)
@@ -63,25 +69,25 @@ window.addEventListener('keyup', (event) => {
 
 });
 
+function resize(){
+    resetGame();
+    startGame();
+}
 function cleanRecords(){
     localStorage.removeItem('record');
     recordView.innerText = 'Record: 🏁 -'
 }
 function gameOver(){
-    game.clearRect(0,0,canvasSize,canvasSize);
-    game.textAlign = 'center';
-    game.fillText('GAME OVER!', canvasSize*.50, canvasSize*.20);
+    canvas.classList.add('inactive');
+    bannerGO.classList.remove('inactive');
     livesHTML.innerText = 'GAME OVER';
     clearInterval(intervalTime);
-    moveUp();
     /* setTimeout(() => resetGame(), 2000); */
 }
 function winGame (){
+        canvas.classList.add('inactive');
+        bannerWIN.classList.remove('inactive');
         console.log('FELICIDADES! Has completado el juego');
-        game.clearRect(0,0,canvasSize,canvasSize);
-        game.textAlign = 'center';
-        game.fillText('CONGRATULATION!', canvasSize*.50, canvasSize*.20);
-        game.fillText(emojis['WIN'], canvasSize*.50, canvasSize*.50);
         showRecord();
         clearInterval(intervalTime);
 }
@@ -93,8 +99,14 @@ function showTime(){
     time.innerText = playerTime.toFixed(2) + ' s';
 }
 function showRecord(){
-    if(localStorage.getItem('record') == 0 || playerTime < localStorage.getItem('record')){
+    if(localStorage.getItem('record') == 0){
         localStorage.setItem('record', playerTime);
+    }else if (playerTime < localStorage.getItem('record')){
+        bannerRercord.innerText = '🏆 New Record! 🏆';
+        bannerRercord.classList.remove('inactive');
+    }else{
+        bannerRercord.innerText = '❌No has superado el record❌'
+        bannerRercord.classList.remove('inactive');
     }
     recordView.innerText = 'Record: 🏁'+ localStorage.getItem('record') + ' s';
 }
@@ -131,9 +143,10 @@ function startGame(){
                 giftPosition.y = elementSize*z;
             }
             if(mapRowsCols[level][i][z-1] == 'O' && playerPosition.x == undefined){
-                console.log(elementSize*i);
-                playerPosition.x = elementSize*i;
-                playerPosition.y = elementSize*z;
+                startPosition.x = elementSize*i;
+                startPosition.y = elementSize*z;
+                playerPosition.x = startPosition.x
+                playerPosition.y = startPosition.y;
             }
             if(mapRowsCols[level][i][z-1] == 'X' && flag){
                 bombsPosition[level].push({x: elementSize*i, y: elementSize*z})
@@ -146,7 +159,9 @@ function startGame(){
 
 function renderPlayer (){
     const collision = bombsPosition[level].find(item => item.x.toFixed() == playerPosition.x.toFixed() && item.y.toFixed() == playerPosition.y.toFixed());
-
+    console.log(collision);
+    console.log(bombsPosition);
+    console.log(playerPosition);
     if(Math.round(playerPosition.y) == Math.round(giftPosition.y) && Math.round(playerPosition.x) == Math.round(giftPosition.x)){
         level++;
         flag = true;
@@ -180,7 +195,7 @@ function canvasResize (){
     }
     canvas.setAttribute('width', canvasSize );
     canvas.setAttribute('height', canvasSize );
-
+    canvasSize = Number(canvasSize.toFixed(0));
     elementSize = canvasSize / 10;
 }
 function moveUp(){
