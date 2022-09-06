@@ -181,9 +181,11 @@ function renderPlayer (){
             playerPosition.y = undefined;
             lives--;
             flag = false;
-            startGame();
-            game.fillText(emojis['BOMB_COLLISION'], collision.x, collision.y);
+            
+            const boom = setInterval(() => {canvas.classList.toggle('inactive'); game.fillText(emojis['BOMB_COLLISION'], collision.x, collision.y)}, 70);
+            
             console.warn('BOOOM');
+            setTimeout(() => {clearInterval(boom); startGame() }, 700);
 
     } else {
         game.fillText(emojis['PLAYER'], playerPosition.x, playerPosition.y);
