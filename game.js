@@ -14,6 +14,7 @@ const cleanRecord = document.getElementById('cleanRecords');
 const bannerGO = document.querySelector('.banner-gameOver');
 const bannerWIN = document.querySelector('.banner-WIN');
 const bannerRercord = document.querySelector('.banner-record');
+const bannerReplay = document.querySelector('.replay');
 
 let canvasSize;
 let elementSize;
@@ -80,16 +81,18 @@ function cleanRecords(){
 function gameOver(){
     canvas.classList.add('inactive');
     bannerGO.classList.remove('inactive');
+    bannerReplay.classList.remove('inactive');
     livesHTML.innerText = 'GAME OVER';
     clearInterval(intervalTime);
     /* setTimeout(() => resetGame(), 2000); */
 }
 function winGame (){
-        canvas.classList.add('inactive');
-        bannerWIN.classList.remove('inactive');
-        console.log('FELICIDADES! Has completado el juego');
-        showRecord();
-        clearInterval(intervalTime);
+    canvas.classList.add('inactive');
+    bannerWIN.classList.remove('inactive');
+    bannerReplay.classList.remove('inactive');
+    console.log('FELICIDADES! Has completado el juego');
+    showRecord();
+    clearInterval(intervalTime);
 }
 function resetGame(){
     location.reload()
@@ -99,9 +102,8 @@ function showTime(){
     time.innerText = playerTime.toFixed(2) + ' s';
 }
 function showRecord(){
-    if(localStorage.getItem('record') == 0){
+    if(localStorage.getItem('record') == 0 || playerTime < localStorage.getItem('record')){
         localStorage.setItem('record', playerTime);
-    }else if (playerTime < localStorage.getItem('record')){
         bannerRercord.innerText = '🏆 New Record! 🏆';
         bannerRercord.classList.remove('inactive');
     }else{
@@ -228,10 +230,8 @@ function moveR(){
 function moveL(){
     if(playerPosition.x < 4){
         playerPosition.x
-
     }else{
         playerPosition.x -= elementSize;
         startGame();
-
     }
 }   

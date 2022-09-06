@@ -17,9 +17,7 @@ body {
 .game-container {
     display: flex;
     flex-direction: column;
-
     align-items: center;
-
     height: 100vh;
     /* width: 100vw; */
 }
@@ -29,7 +27,6 @@ canvas {
     border: 3px dashed orange;
     border-radius: 8px;
 }
-
 .banner-gameOver{
     width: 100%;
     background-color: red;
@@ -43,6 +40,12 @@ canvas {
     text-align: center;
     font-size: 32px;
     font-weight: bold;
+}
+.replay{
+    width: 100%;
+    color: white;
+    background-color: black;
+    text-align: center;
 }
 .banner-record{
     color: white;
