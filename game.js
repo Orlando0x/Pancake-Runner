@@ -84,7 +84,6 @@ function gameOver(){
     bannerReplay.classList.remove('inactive');
     livesHTML.innerText = 'GAME OVER';
     clearInterval(intervalTime);
-    /* setTimeout(() => resetGame(), 2000); */
 }
 function winGame (){
     canvas.classList.add('inactive');
@@ -104,10 +103,10 @@ function showTime(){
 function showRecord(){
     if(localStorage.getItem('record') == 0 || playerTime < localStorage.getItem('record')){
         localStorage.setItem('record', playerTime);
-        bannerRercord.innerText = '🏆 New Record! 🏆';
+        bannerRercord.innerText = '🏆New Record!';
         bannerRercord.classList.remove('inactive');
     }else{
-        bannerRercord.innerText = '❌No has superado el record❌'
+        bannerRercord.innerText = '❌No has superado el record'
         bannerRercord.classList.remove('inactive');
     }
     recordView.innerText = 'Record: 🏁'+ localStorage.getItem('record') + ' s';
@@ -122,7 +121,6 @@ function startGame(){
         startTime = Date.now();
         intervalTime = setInterval(showTime,100);
     }
-    
     if (lives > 0){
         livesHTML.innerText = "Vidas: " + emojis['HEART'].repeat(lives);
     } else{
@@ -151,7 +149,7 @@ function startGame(){
                 playerPosition.y = startPosition.y;
             }
             if(mapRowsCols[level][i][z-1] == 'X' && flag){
-                bombsPosition[level].push({x: elementSize*i, y: elementSize*z})
+                bombsPosition[level].push({x: (elementSize*i).toFixed(0), y: (elementSize*z).toFixed(0)})
             }
         }
     }
@@ -160,10 +158,10 @@ function startGame(){
 }
 
 function renderPlayer (){
-    const collision = bombsPosition[level].find(item => item.x.toFixed() == playerPosition.x.toFixed() && item.y.toFixed() == playerPosition.y.toFixed());
-    console.log(collision);
+    const collision = bombsPosition[level].find(item => item.x == playerPosition.x.toFixed(0) && item.y == playerPosition.y.toFixed(0));
+/*     console.log(collision);
     console.log(bombsPosition);
-    console.log(playerPosition);
+    console.log(playerPosition); */
     if(Math.round(playerPosition.y) == Math.round(giftPosition.y) && Math.round(playerPosition.x) == Math.round(giftPosition.x)){
         level++;
         flag = true;
@@ -182,10 +180,10 @@ function renderPlayer (){
             lives--;
             flag = false;
             
-            const boom = setInterval(() => {canvas.classList.toggle('inactive'); game.fillText(emojis['BOMB_COLLISION'], collision.x, collision.y)}, 70);
+            const boom = setInterval(() => {canvas.classList.toggle('inactive'); game.fillText(emojis['BOMB_COLLISION'], collision.x, collision.y)}, 50);
             
             console.warn('BOOOM');
-            setTimeout(() => {clearInterval(boom); startGame() }, 700);
+            setTimeout(() => {clearInterval(boom); startGame() }, 400);
 
     } else {
         game.fillText(emojis['PLAYER'], playerPosition.x, playerPosition.y);

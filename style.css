@@ -163,4 +163,10 @@ canvas {
     .btns button, .record{
         font-size: 1.4rem;
     }
+    .banner-WIN{
+        font-size: 24px;
+    }
+    .banner-gameOver{
+        font-size: 28px;
+    }
 }
