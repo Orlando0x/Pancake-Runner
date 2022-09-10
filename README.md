@@ -8,3 +8,6 @@
 
 cantidad de niveles: 3
 
+Ayuda al conejito🐰 a obtener su pancake🥞 sin tocar las bombas💣, tienes solo 3 vidas❤️
+
+El mejor tiempo⏱️ que logres al completar todos los niveles quedara registrado, intenta batir luego tu propio record🏁
